@@ -1,0 +1,485 @@
+// the account must be atleast 3 digit 
+
+// the password is god
+
+#include<iostream.h>
+#include<conio.h>
+#include<fstream.h>
+#include<ctype.h>
+#include<iomanip.h>
+#include<stdio.h>
+#include<process.h>
+#include<dos.h>
+#include<stdlib.h>
+#include<string.h>
+
+class account
+{
+	int acno;
+	char name[50];
+	int deposit;
+	char type;
+
+public:
+void create_account();
+	void show_account();
+	void modify();
+	void dep(int);
+	void draw(int);
+	void report();
+	int retacno();
+	int retdeposit();
+	char rettype();
+};
+void account::create_account()
+{
+	cout<<"\n Enter the account no.:";
+	cin>>acno;
+	cout<<"\n Enter the name of the account holder:";
+	gets(name);
+	cout<<"\n Enter type of the account (c/s):";
+	cin>>type;
+	type=toupper(type);
+	cout<<"\n Enter the initial amount (>=500 for saving and >=1000 for current ) :";
+	cin>>deposit;
+	cout<<"\n\n Account created..";
+}
+void account::show_account()
+{
+	cout<<"\n Acount No. "<<acno;
+	cout<<"\n Account Holder Name :"<<name;
+	cout<<"\n Type of Acount :"<<type;
+	cout<<"\n Balance amount :"<<deposit;
+
+}
+void account::modify()
+{           ;
+	cout<<"\n The account no."<<acno;
+	cout<<"\n\n Enter the name of account holder :";
+	gets(name);
+	cout<<"\n Enter the type of account (c/s) :";
+	cin>>type;
+	type=toupper(type);
+	cout<<"\n Enter the amount :";
+	cin>>deposit;
+}
+void account::dep(int x)
+{
+	deposit+=x;
+}
+void account::draw(int x)
+{
+	deposit-=x;
+}
+void account::report()
+{
+	cout<<acno<<setw(10)<<"       "<<name<<setw(10)<<"        "<<type<<setw(6)<<"       "<<deposit<<"\n";
+}
+int account::retacno()
+{
+	return acno;
+}
+int account::retdeposit()
+{
+	return deposit;
+}
+char account::rettype()
+{
+	return type;
+}
+void write_account();
+void display_sp(int);
+void modify_account(int);
+void delete_account(int);
+void display_all();
+void deposit_withdraw(int,int);
+void intro();
+
+void main()
+{
+	char ch;
+	int num;
+	clrscr();
+
+	intro();
+	do
+	{
+		clrscr();
+
+	    int i;
+
+for(i=0;i<=79;i++)
+{
+cout<<"*";
+delay(10);
+}
+
+		cout<<"\n\t MAIN MENU:";
+
+		cout<<("\n\n\t 01. NEW ACCOUNT");
+
+		cout<<"\n\n\t 02. DEPOSIT AMOUNT";
+
+		cout<<"\n\n\t 03. WITHDRAW AMOUNT";
+
+		cout<<"\n\n\t 04. BALANCE ENQUIRY";
+
+		cout<<"\n\n\t 05. ALL ACCOUNT HOLDER LIST";
+
+		cout<<"\n\n\t 06. CLOSE AN ACCOUNT";
+
+		cout<<"\n\n\t 07. MODIFY AN ACCOUNT";
+
+		cout<<"\n\n\t 08. EXIT";
+
+		cout<<"\n\n\t Select your option (1-8)";
+		cout<<"\n\n";
+		for(i=79;i>=0;i--){
+	       cout<<"*";
+	      delay(10);
+}
+
+		cin>>ch;
+		clrscr();
+		switch(ch)
+		{
+		case '1':
+			write_account();
+			break;
+		case '2':
+			cout<<"\n\n\t Enter the account no. :";
+			cin>>num;
+			deposit_withdraw(num,1);
+			break;
+		case '3':
+			cout<<"\n\n\t Enter the account no. :";
+			cin>>num;
+			deposit_withdraw(num,2);
+			break;
+		case '4':
+			cout<<"\n\n\t Enter the account no. :";
+			cin>>num;
+			display_sp(num);
+			break;
+		case '5':
+			display_all();
+			break;
+		case '6':
+			cout<<"\n\n\t Enter the account no. :";
+			cin>>num;
+			delete_account(num);
+			break;
+		case '7':
+			cout<<"\n\n\t Enter the account no. :";
+			cin>>num;
+			modify_account(num);
+			break;
+		case '8':
+			cout<<"\n\n\t Thanks for using bank management system";
+		      cout<<"\n";
+					int j;
+			for (i=0; i<5; i++)
+			{
+			for(j=0;j<=i;j++)
+   {
+      cout<<" thank you ";
+
+	   }
+	   cout<<"\n";
+   }
+   cout<<"\n";
+      for(i=0;i<=15;i++)
+      {
+    textattr(i + ((i+1) << 4));
+cprintf(" thank you thank you thank you thank you thank you thank you thank you ........\r\n");
+}
+
+			break;
+		default :cout<<"\a";
+		}
+		getch();
+	}while(ch!='8');
+	getch();
+}
+void write_account()
+{
+	account ac;
+	ofstream outfile;
+	outfile.open("account.dat",ios::binary|ios::app);
+	ac.create_account();
+	outfile.write((char*)&ac,sizeof(account));
+	outfile.close();
+}
+void display_sp(int n)
+{
+	account ac;
+	int flag=0;
+	ifstream infile;
+	infile.open("account.dat",ios::binary);
+	if(!infile)
+	{
+		cout<<"File could not be open !! Press any key...";
+		return;
+	}
+	cout<<"\n BALANCE DETAILS\n";
+	while(infile.read((char*) &ac,sizeof(account)))
+	{
+		if(ac.retacno()==n)
+		{
+			ac.show_account();
+			flag=1;
+		}
+	}
+	infile.close();
+	if(flag==0)
+		cout<<"\n\n Acount number does not exist";
+}
+void modify_account(int n)
+{
+	int found=0;
+	account ac;
+	fstream file;
+	file.open("account.dat",ios::binary|ios::in|ios::out);
+	if(!file)
+	{
+		cout<<"File could not be open !! Press any key...";
+		return;
+	}
+	while(file.read((char*) &ac ,sizeof(account)) && found==0)
+	{
+		if(ac.retacno()==n)
+		{
+			ac.show_account();
+			cout<<"\n\n Enter the new details of account"<<"\n";
+			ac.modify();
+			int pos=(-1)*sizeof(account);
+			file.seekp(pos,ios::cur);
+			file.write((char*) &ac,sizeof(account));
+			cout<<"\n\n\t Record Updated";
+			found=1;
+		}
+	}
+	file.close();
+	if(found==0)
+	cout<<"\n\n Record not found ";
+}
+void delete_account(int n)
+{
+	account ac;
+	ifstream infile;
+	ofstream outfile;
+	infile.open("account.dat",ios::binary);
+	if(!infile)
+	{
+		cout<<"File could not be open !! Press any key...";
+		return;
+	}
+	outfile.open("temp.dat",ios::binary);
+	infile.seekg(0,ios::beg);
+	while(infile.read((char*) &ac ,sizeof(account)))
+	{
+		if(ac.retacno()!=n)
+		{
+			outfile.write((char*) &ac,sizeof(account));
+		}
+	}
+	infile.close();
+	outfile.close();
+	remove("account.dat");
+	rename("temp.dat","account.dat");
+	cout<<"\n\n\t Record Deleted..";
+}
+void display_all()
+{
+	account ac;
+	ifstream infile;
+	infile.open("account.dat",ios::binary);
+	if(!infile)
+	{
+		cout<<"File could not be open !! Press any key..:";
+		return;
+	}
+	cout<<"\n\n\t\t ACCOUNT HOLDER LIST\n\n";
+	cout<<"===========================================================\n";
+	cout<<"A/c no.    NAME       Type    Balance\n";
+	cout<<"===========================================================\n";
+	while(infile.read((char*)&ac,sizeof(account)))
+	{
+		ac.report();
+	}
+	infile.close();
+}
+void deposit_withdraw(int n,int option)
+{
+	int amt;
+	int found=0;
+	account ac;
+	fstream file;
+	file.open("account.dat",ios::binary|ios::in|ios::out);
+	if(!file)
+	{
+		cout<<"File could not be open !! Press any key..:";
+		return;
+	}
+	while(file.read((char*)&ac,sizeof(account)) && found==0)
+	{
+		if(ac.retacno()==n)
+		{
+			ac.show_account();
+			if(option==1)
+			{
+				cout<<"\n\nTO DEPOSITE AMOUNT ";
+				cout<<"\n\n Enter the amount to be deposited :";
+				cin>>amt;
+				ac.dep(amt);
+			}
+			if(option==2)
+			{
+				cout<<"\n\nTO WITHDRAW AMOUNT :";
+				cout<<"\n\n Enter the amount to be withdraw : ";
+				cin>>amt;
+				int bal=ac.retdeposit()-amt;
+				if((bal<500 && ac.rettype()=='s')|| (bal<1000 && ac.rettype()=='c'))
+					cout<<"Insufficent Balance";
+			else
+				ac.draw(amt);
+			}
+			int pos=(-1) *sizeof(ac);
+			file.seekp(pos,ios::cur);
+			file.write((char*) &ac,sizeof(account));
+			cout<<"\n\n\t Record Updated";
+			found=1;
+		}
+	}
+	file.close();
+	if(found==0)
+		cout<<"\n\n Record Not Found ";
+}
+void intro()
+{
+  clrscr();
+  int numLines;
+ char filename[40];
+ char command[3];
+ clrscr();
+ int i1;
+ textcolor(LIGHTRED);
+	 int x,y;
+	 x=39;
+	 y=15;  int a;
+clrscr();
+       for(i1=5;i1>=0;i1--)
+      {
+   gotoxy(x,y);
+     cout<<i1;
+     delay(1000);
+
+}
+
+char z[10];char code[10]="god";
+ clrscr();
+ cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\tENTER CODE";
+ for(int i=0;i<10;i++)
+ {
+ z[i]=getch();
+ if(z[i]=='\r')
+ {z[i]='\0';break;}
+ else
+ cout<<'*';
+ }
+ clrscr();
+ for(int q=0;q<3;q++)
+ {
+ textcolor(q);
+ delay(300);
+ cout<<"\n\n\n\n\n\n\n\n\t\t\tCHECKING CODE";
+ delay(300);
+ clrscr();
+ }
+ delay(500);
+ int n=strcmp(code,z);
+ if(n!=0)
+ {
+	cout<<"\n\n\n\t\t  SORRY THE CODE IS WRONG...";
+	delay(500);
+	exit (0);
+ }
+ else
+ {       delay(100);
+ clrscr();
+
+for(int f=1;f<=2;f++)
+{
+clrscr();
+for(int N=1;N<=700;N++)
+{
+
+ cprintf("00110110");
+ delay(1);
+
+}
+cout<<"\b\b\b";
+textcolor(f);
+}
+clrscr();
+for(int N=0;N<2000;N++)
+{
+cout<<" ";
+delay(1);
+}
+ textcolor(CYAN);
+ clrscr();
+ cout<<"\n\n\n\n\n\t\t\t\tLoading";
+ delay(100);
+ cout<<".";
+ delay(100);
+ cout<<".";
+ delay(100);
+ cout<<".";
+ delay(100);
+ textcolor(LIGHTMAGENTA);
+ clrscr();
+ cout<<"\n\n\n\L";
+ delay(300);
+ cout<<"\to";delay(300);
+ cout<<"\ta";delay(300);
+ cout<<"\td";delay(300);
+ cout<<"\ti";delay(300);
+ cout<<"\tn";delay(300);
+ cout<<"\tg";delay(300);
+ cout<<"\t.";delay(300);
+ cout<<"\t.";delay(300);
+ cout<<"\t.";delay(300);
+	clrscr();
+ for(int s=1;s<60;s++)
+ {
+ cout<<"\n\n\n\t\t   ******ACCESS GRANTED******";
+ delay(20);
+ textcolor(s);
+ clrscr();
+ }
+  clrscr();
+  textmode(C80);
+ for(s=1;s<41;s++)
+ {
+ clrscr();
+	cout<<"********************************************************************************";
+	cout<<"\n\n\t BANK";
+	cout<<"\n\n\t      MANAGEMENT";
+	cout<<"\n\n\t                 SYSTEM";
+	cout<<"\n\n\t MADE BY:ADITYA DAND & VIPIN KUSHWAHA";
+	cout<<"\n\n********************************************************************************";
+	 delay(90);
+ textcolor(s);
+ }
+getch();
+
+}
+}
+
+
+
+
+
+
+
